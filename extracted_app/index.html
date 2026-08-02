@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https://api.anthropic.com https://api.openai.com https://generativelanguage.googleapis.com https://integrate.api.nvidia.com https://api.deepseek.com https://api.groq.com https://openrouter.ai http://localhost:11434 http://127.0.0.1:11434 https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src https://fonts.gstatic.com https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; img-src 'self' data: https://image.pollinations.ai https://*.pollinations.ai;">
+<title>IP Vexa</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0c14;
+    --surface: #111420;
+    --surface2: #181d2e;
+    --border: #1e2540;
+    --accent: #4f8eff;
+    --accent2: #7c5cfc;
+    --accent3: #3dd6f5;
+    --glow: rgba(79,142,255,0.18);
+    --ring: rgba(79,142,255,0.45);
+    --text: #e8eaf2;
+    --muted: #6b7494;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* ── DEEPSEEK THINKING ── */
+  .thinking-block {
+    background:rgba(255,255,255,0.03); border-left:2px solid var(--accent);
+    padding:10px 15px; margin:10px 0; border-radius:4px;
+    font-size:12px; color:var(--muted); font-family:monospace;
+  }
+  .thinking-summary {
+    cursor:pointer; display:flex; align-items:center; gap:8px;
+    font-weight:500; color:var(--accent); margin-bottom:8px;
+  }
+  .thinking-content { display:none; }
+  .thinking-block.open .thinking-content { display:block; }
+  
+  .msg-actions { display:flex; gap:8px; margin-top:10px; opacity:0; transition:opacity .2s; }
+  .bubble:hover .msg-actions { opacity:1; }
+  .action-icon { font-size:14px; cursor:pointer; color:var(--muted); transition:color .2s; }
+  .action-icon:hover { color:var(--accent); }
+  .mermaid { background:white; padding:10px; border-radius:8px; margin-top:10px; width:fit-content; }
+
+  /* ── TITLE BAR ── */
+  #titlebar {
+    height: 38px;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    -webkit-app-region: drag;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    gap: 10px;
+  }
+  .tb-logo {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    box-shadow: 0 0 8px var(--ring);
+  }
+  .tb-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .tb-spacer { flex: 1; }
+  .tb-controls {
+    display: flex; gap: 6px;
+    -webkit-app-region: no-drag;
+  }
+  .tb-btn {
+    width: 13px; height: 13px;
+    border-radius: 50%;
+    border: none; cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .tb-btn:hover { opacity: 0.8; }
+  .tb-btn.close   { background: #ff5f57; }
+  .tb-btn.min     { background: #ffbd2e; }
+  .tb-btn.max     { background: #28c840; }
+
+  /* ── HEADER ── */
+  header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+  }
+  .logo-orb {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 0 22px var(--ring);
+    animation: pulse-orb 3s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes pulse-orb {
+    0%,100% { box-shadow: 0 0 20px var(--ring); }
+    50% { box-shadow: 0 0 36px rgba(124,92,252,0.6); }
+  }
+  .header-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 21px;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header-status {
+    font-size: 11px; color: var(--muted);
+    display: flex; align-items: center; gap: 5px; margin-top: 2px;
+  }
+  .status-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #3dd6f5;
+    animation: blink 2s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .header-spacer { flex: 1; }
+  .api-label {
+    font-size: 10px; letter-spacing: 1.2px;
+    color: var(--accent); border: 1px solid rgba(79,142,255,0.3);
+    padding: 3px 10px; border-radius: 20px;
+    font-family: 'Syne', sans-serif; font-weight: 700;
+    box-shadow: 0 0 10px rgba(124, 92, 252, 0.3);
+  }
+  .property-tag {
+    font-size: 8px; color: var(--muted); opacity: 0.6;
+    letter-spacing: 1px; margin-left: 10px; text-transform: uppercase;
+  }
+  .header-name {
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  /* ── MESSAGES ── */
+  #chat {
+    flex: 1; min-height: 0; overflow-y: auto; padding: 22px 18px;
+    display: flex; flex-direction: column; gap: 14px;
+    scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+  }
+  #chat::-webkit-scrollbar { width: 4px; }
+  #chat::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .msg-row { display: flex; gap: 10px; max-width: 82%; animation: slide-in 0.28s ease; }
+  @keyframes slide-in { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .msg-row.user { margin-left: auto; flex-direction: row-reverse; }
+  .msg-row.ai   { margin-right: auto; }
+
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0; margin-top: 2px;
+  }
+  .avatar.ai {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    box-shadow: 0 0 10px var(--glow);
+  }
+  .avatar.user {
+    background: var(--surface2);
+    border: 1px solid var(--border); color: var(--muted);
+  }
+  .bubble {
+    padding: 11px 16px; border-radius: 18px;
+    font-size: 14px; line-height: 1.65;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  .bubble.ai {
+    background: #131826;
+    border: 1px solid var(--border);
+    border-top-left-radius: 4px;
+    max-width: 90%;
+  }
+  .bubble.ai pre {
+    background:rgba(0,0,0,0.3); border:1px solid var(--border);
+    border-radius:8px; padding:12px; margin:10px 0;
+    overflow-x:auto; position:relative;
+  }
+  .bubble.ai code { font-family:'Fira Code','Courier New',monospace; font-size:12px; }
+  .bubble.ai p { margin:8px 0; }
+  .bubble.ai ul, .bubble.ai ol { padding-left:20px; margin:8px 0; }
+  
+  .code-header {
+    display:flex; justify-content:space-between; align-items:center;
+    background:rgba(255,255,255,0.05); padding:4px 10px;
+    border-top-left-radius:8px; border-top-right-radius:8px;
+    margin:-12px -12px 8px -12px; border-bottom:1px solid var(--border);
+  }
+  .code-lang { font-size:10px; color:var(--muted); text-transform:uppercase; font-weight:700; }
+  .copy-btn {
+    background:rgba(79,142,255,0.12); border:1px solid var(--accent);
+    color:var(--accent); font-size:11px; font-weight:700; padding:3px 10px;
+    border-radius:6px; cursor:pointer; transition:all .2s;
+  }
+  .copy-btn:hover { background:var(--accent); color:white; transform:scale(1.04); }
+  .copy-btn.copied { background:#28a745; color:white; border-color:#28a745; }
+  .bubble.user {
+    background: #1a2245;
+    border: 1px solid rgba(79,142,255,0.2);
+    border-top-right-radius: 4px;
+  }
+
+  /* ── TYPING ── */
+  .typing-dots { display:flex; gap:4px; align-items:center; padding:4px 0; }
+  .typing-dots span {
+    width:7px; height:7px; border-radius:50%;
+    background: var(--accent);
+    animation: bounce 1.2s ease-in-out infinite;
+  }
+  .typing-dots span:nth-child(2){animation-delay:.2s}
+  .typing-dots span:nth-child(3){animation-delay:.4s}
+  @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+
+  /* ── WELCOME ── */
+  .welcome {
+    text-align: center; padding: 40px 20px;
+    margin: auto; max-width: 580px; width: 100%;
+    min-height: 380px;
+    z-index: 1; position: relative;
+    display: flex !important; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .welcome-orb {
+    width: 80px; height: 80px; border-radius:50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display:flex; align-items:center; justify-content:center;
+    font-size:36px; margin:0 auto 20px;
+    box-shadow: 0 0 30px var(--glow);
+  }
+  .welcome-title {
+    font-family:'Syne',sans-serif; font-weight:800; font-size:32px;
+    background: linear-gradient(to right, #fff, var(--accent));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    background-clip:text; margin-bottom:12px;
+    letter-spacing: -1px;
+  }
+  .welcome-sub { color:var(--muted); font-size:14px; line-height:1.6; margin-bottom:28px; opacity: 0.7; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+  .chip {
+    font-size:12px; color:var(--accent);
+    border:1px solid rgba(79,142,255,0.3);
+    background:rgba(79,142,255,0.07);
+    padding:6px 14px; border-radius:20px;
+    cursor:pointer; transition:all .2s;
+    -webkit-user-select:none;
+    user-select:none;
+  }
+  .chip:hover { background:rgba(79,142,255,0.15); border-color:var(--accent); transform:translateY(-1px); }
+
+  /* ── API KEY SETUP MODAL OVERLAY ── */
+  #api-setup-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(5, 7, 12, 0.85);
+    backdrop-filter: blur(12px);
+    z-index: 1000;
+    align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  #api-setup {
+    width: 100%; max-width: 440px; padding: 30px 26px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    position: relative;
+    animation: slide-in 0.25s ease;
+  }
+  .close-modal-btn {
+    position: absolute; top: 16px; right: 18px;
+    background: none; border: none; color: var(--muted);
+    font-size: 18px; cursor: pointer; transition: color 0.2s;
+  }
+  .close-modal-btn:hover { color: var(--text); }
+  #api-setup h2 {
+    font-family:'Syne',sans-serif; font-weight:800; font-size:18px;
+    color:var(--text); margin-bottom:8px;
+  }
+  #api-setup p { color:var(--muted); font-size:13px; margin-bottom:18px; line-height:1.6; }
+  #api-key-input {
+    width:100%; background:var(--surface2);
+    border:1px solid var(--border); border-radius:10px;
+    color:var(--text); font-family:'DM Sans',sans-serif; font-size:13px;
+    padding:10px 14px; outline:none; margin-bottom:12px;
+    transition:border-color .2s;
+  }
+  #api-key-input:focus { border-color:var(--accent); }
+  #api-key-input::placeholder { color:var(--muted); }
+  #save-key-btn {
+    width:100%; padding:10px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    border:none; border-radius:10px; color:#fff;
+    font-family:'Syne',sans-serif; font-weight:700; font-size:14px;
+    cursor:pointer; transition:opacity .2s;
+  }
+  #save-key-btn:hover { opacity:0.85; }
+  .api-hint { font-size:11px; color:var(--muted); margin-top:10px; }
+  .api-hint a { color:var(--accent); text-decoration:none; }
+
+  /* ── ACTION BAR ── */
+  .action-bar {
+    display:flex; gap:12px; padding:12px 24px;
+    background:rgba(255,255,255,0.03);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    align-items:center; backdrop-filter: blur(10px);
+  }
+  .action-btn {
+    background:rgba(255,255,255,0.05); border:1px solid var(--border);
+    color:var(--text); font-size:11px; padding:7px 14px;
+    border-radius:20px; cursor:pointer; display:flex; align-items:center; gap:8px;
+    transition:all .3s; font-weight: 600;
+  }
+  .action-btn:hover { border-color:var(--accent); background:rgba(79,142,255,0.1); }
+  .action-btn i { font-size:14px; }
+  
+  /* Toggle Switch */
+  .toggle-container { display:flex; align-items:center; gap:8px; margin-left:auto; }
+  .switch {
+    position:relative; display:inline-block; width:34px; height:20px;
+  }
+  .switch input { opacity:0; width:0; height:0; }
+  .slider {
+    position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0;
+    background-color:var(--surface2); transition:.4s; border-radius:34px;
+    border:1px solid var(--border);
+  }
+  .slider:before {
+    position:absolute; content:""; height:14px; width:14px; left:2px; bottom:2px;
+    background-color:var(--muted); transition:.4s; border-radius:50%;
+  }
+  input:checked + .slider { background-color:rgba(79,142,255,0.2); border-color:var(--accent); }
+  input:checked + .slider:before { transform:translateX(14px); background-color:var(--accent); }
+
+  /* ── SLASH COMMANDS UI ── */
+  #command-suggestions {
+    position:absolute; bottom:100%; left:20px; right:20px;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:12px; margin-bottom:10px; display:none;
+    box-shadow:0 10px 30px rgba(0,0,0,0.5); z-index:100;
+    overflow:hidden;
+  }
+  .suggestion-item {
+    padding:10px 15px; display:flex; align-items:center; gap:12px;
+    cursor:pointer; transition:all .2s; border-bottom:1px solid rgba(255,255,255,0.03);
+  }
+  .suggestion-item:hover, .suggestion-item.active { background:rgba(79,142,255,0.1); }
+  .suggestion-cmd { color:var(--accent); font-weight:700; font-family:monospace; font-size:13px; }
+  .suggestion-desc { color:var(--muted); font-size:11px; }
+
+  /* ── VOICE PULSE ── */
+  .pulse-btn {
+    width:32px; height:32px; border-radius:50%; border:1px solid var(--border);
+    background:rgba(255,255,255,0.05); color:var(--muted); font-size:15px;
+    cursor:pointer; transition:all .3s; display:flex; align-items:center; justify-content:center;
+  }
+  .pulse-btn.listening {
+    color:var(--accent); border-color:var(--accent);
+    box-shadow:0 0 15px var(--accent);
+    animation:pulse-ring 1.5s infinite;
+  }
+  @keyframes pulse-ring {
+    0% { transform:scale(1); opacity:1; }
+    50% { transform:scale(1.1); opacity:0.8; }
+    100% { transform:scale(1); opacity:1; }
+  }
+
+  /* ── FOOTER INPUT ── */
+  footer {
+    padding:4px 14px 8px 14px;
+    background:var(--bg);
+    flex-shrink:0;
+  }
+  .input-row {
+    display:flex; gap:10px; align-items:center;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:20px; padding:4px 6px 4px 16px;
+    transition:all .3s ease;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+  .input-row:focus-within {
+    border-color:var(--accent);
+    background:rgba(255,255,255,0.06);
+    box-shadow:0 0 18px rgba(79,142,255,.15);
+  }
+  #user-input {
+    flex:1; background:none; border:none; outline:none;
+    color:var(--text); font-family:'DM Sans',sans-serif;
+    font-size:13px; resize:none; line-height:1.4;
+    max-height:80px; min-height:20px; padding:4px 0;
+  }
+  #user-input::placeholder { color:var(--muted); }
+  #send-btn {
+    width:32px; height:32px; border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    border:none; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; transition:opacity .2s,transform .15s;
+    color:#fff; font-size:14px;
+  }
+  #send-btn:hover { transform:scale(1.06); }
+  #send-btn:disabled { opacity:.35; cursor:not-allowed; transform:none; }
+  .footer-hint {
+    display:none;
+  }
+
+  /* ── MULTI-UPLOAD PREVIEW ── */
+  #upload-preview-list {
+    display:none; gap:10px; padding:10px 0;
+    overflow-x:auto; scrollbar-width:none;
+    animation: slide-in 0.2s ease;
+  }
+  #upload-preview-list::-webkit-scrollbar { display:none; }
+  
+  .preview-item {
+    display:flex; align-items:center; gap:8px;
+    background:var(--surface2); border:1px solid var(--accent);
+    padding:6px 10px; border-radius:10px; flex-shrink:0;
+    position:relative;
+  }
+  .preview-thumb {
+    width:24px; height:24px; border-radius:4px;
+    object-fit:cover; background:var(--surface);
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; border:1px solid var(--border);
+  }
+  .preview-info { max-width:80px; overflow:hidden; }
+  .preview-name { font-size:10px; font-weight:600; color:var(--text); white-space:nowrap; text-overflow:ellipsis; }
+  .preview-size { font-size:8px; color:var(--muted); }
+  .remove-item { cursor:pointer; color:#ff5f57; font-size:12px; margin-left:4px; }
+
+  #upload-btn {
+    width:32px; height:32px; border-radius:50%;
+    background:var(--surface2); border:1px solid var(--border);
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    color:var(--muted); transition:all .2s; font-size:14px;
+  }
+  #upload-btn:hover { border-color:var(--accent); color:var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- Custom Title Bar -->
+<div id="titlebar">
+  <div class="tb-logo">✦</div>
+  <span class="tb-title">IP Vexa</span>
+  <div class="tb-spacer"></div>
+  <div class="tb-controls">
+    <button class="tb-btn min"   onclick="window.electronAPI.minimize()"></button>
+    <button class="tb-btn max"   onclick="window.electronAPI.maximize()"></button>
+    <button class="tb-btn close" onclick="window.electronAPI.close()"></button>
+  </div>
+</div>
+
+
+
+<!-- Action Bar -->
+<div class="action-bar">
+  <button class="action-btn" onclick="toggleHistorySidebar()" title="Toggle Saved Chat Sessions Sidebar">
+    <span>💬</span> Chats
+  </button>
+
+  <button class="action-btn" onclick="scanFolder()">
+    <span>📂</span> Folders Check
+  </button>
+  <div id="local-status" style="font-size:10px; color:var(--muted); margin-left:5px;">No folder selected</div>
+  
+  <div class="toggle-container">
+    <span style="font-size:10px; color:var(--accent); font-weight:700;">Live Search</span>
+    <label class="switch">
+      <input type="checkbox" id="search-toggle" checked>
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <button class="action-btn" id="memory-btn" onclick="showMemoryModal()" title="Self-Learning Memory & User Preferences">
+    <span>🧠</span> Memory
+  </button>
+
+  <button class="action-btn" id="clear-chat-btn" onclick="clearChatDisplay()" title="Clear Chat Screen (Keeps Learned Memory Intact)">
+    <span>🧹</span> Clear Chat
+  </button>
+
+  <button class="action-btn" onclick="openApiSetup()" title="Configure AI Provider & API Keys">
+    <span>⚙️</span> Settings
+  </button>
+</div>
+
+<!-- Main Workspace Container -->
+<div id="workspace-container" style="display:flex; flex:1; min-height:0; overflow:hidden; position:relative;">
+  <!-- History Sidebar Drawer -->
+  <div id="history-sidebar" style="display:none; width:250px; border-right:1px solid var(--border); background:var(--surface); flex-direction:column; flex-shrink:0; z-index:20;">
+    <div style="padding:12px 14px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:var(--surface2);">
+      <span style="font-weight:700; font-size:12px; color:var(--accent);">💬 Chat Sessions</span>
+      <button onclick="createNewChatSession()" class="action-btn" style="padding:4px 10px; font-size:11px;">+ New</button>
+    </div>
+    <div id="chat-threads-list" style="flex:1; overflow-y:auto; padding:8px; display:flex; flex-direction:column; gap:6px;"></div>
+  </div>
+
+  <!-- Chat Area -->
+  <div id="chat" style="flex:1; height:100%; overflow-y:auto;">
+  <!-- API Setup Modal Overlay -->
+  <div id="api-setup-overlay">
+    <div id="api-setup">
+      <button class="close-modal-btn" onclick="closeApiSetup()">✕</button>
+      <h2>🔑 AI Provider & API Setup</h2>
+      <p>Select your preferred AI provider and key to power VEXA AI.</p>
+      
+      <select id="provider-select" onchange="toggleProviderHint()" style="width:100%; margin-bottom:12px; padding:10px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; color:var(--text); font-family:inherit;">
+        <option value="nvidia">NVIDIA NIM (Llama 3.1 8B/405B)</option>
+        <option value="anthropic">Anthropic (Claude 3.5 / 4)</option>
+        <option value="openai">OpenAI (ChatGPT / GPT-4o)</option>
+        <option value="gemini">Google Gemini API</option>
+        <option value="deepseek">DeepSeek AI (R1 / Chat)</option>
+        <option value="groq">Groq (Llama 3.3 70B Fast)</option>
+        <option value="openrouter">OpenRouter (All Models)</option>
+        <option value="custom">Custom OpenAI-Compatible API</option>
+      </select>
+
+      <div id="custom-fields" style="display:none; margin-bottom:10px; margin-top:8px;">
+        <input type="text" id="custom-endpoint-input" placeholder="Endpoint URL e.g. http://localhost:8000/v1/chat/completions" style="width:100%; margin-bottom:8px; padding:8px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text);" />
+        <input type="text" id="custom-model-input" placeholder="Model name e.g. gpt-4o or qwen2.5" style="width:100%; padding:8px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text);" />
+      </div>
+      
+      <input type="password" id="api-key-input" placeholder="Enter API key..." />
+      
+      <button id="save-key-btn" onclick="saveApiKey()">Save & Connect ✦</button>
+
+      <p class="api-hint" id="api-link-hint">
+        Get your API key →
+        <a href="#" id="api-url" onclick="openLink('https://build.nvidia.com')">build.nvidia.com</a>
+      </p>
+    </div>
+  </div>
+
+    <!-- Welcome screen -->
+    <div class="welcome" id="welcome" style="display:none">
+      <div class="welcome-orb">✦</div>
+      <div class="welcome-title">Welcome to VEXA AI</div>
+      <div class="welcome-sub">Open-source neural assistant active & ready. 🚀</div>
+      <div class="chips">
+        <div class="chip" onclick="useChip(this)">Tell me a tech joke 😄</div>
+        <div class="chip" onclick="useChip(this)">What can you do?</div>
+        <div class="chip" onclick="useChip(this)">Analyze code in current folder</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Code & Artifact Canvas Panel -->
+  <div id="canvas-panel" style="display:none; width:45%; height:100%; border-left:1px solid var(--border); background:var(--surface); flex-direction:column; z-index:20;">
+    <div class="canvas-header" style="padding:12px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:var(--surface2);">
+      <span style="font-weight:700; font-size:13px; color:var(--accent);">🎨 Code & Artifact Canvas</span>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button onclick="copyCanvasText()" class="action-btn" style="padding:4px 10px; font-size:11px;">📋 Copy</button>
+        <button onclick="closeCanvas()" style="background:none; border:none; color:var(--muted); cursor:pointer; font-size:16px; padding:0 4px;">✕</button>
+      </div>
+    </div>
+    <pre id="canvas-content" style="flex:1; padding:16px; margin:0; overflow:auto; font-family:'Fira Code','Courier New',monospace; font-size:12px; color:var(--text); background:rgba(0,0,0,0.3); line-height:1.6; border:none; border-radius:0;"></pre>
+  </div>
+</div>
+
+<!-- Footer Input -->
+<footer>
+  <div id="command-suggestions"></div>
+  <div id="upload-preview-list"></div>
+
+  <div class="input-row">
+    <input type="file" id="file-input" style="display:none" multiple onchange="handleFileSelect(event)" />
+    <button id="upload-btn" onclick="document.getElementById('file-input').click()">📎</button>
+    <textarea id="user-input" rows="1" placeholder="Ask VEXA AI anything..."></textarea>
+    <button id="voice-btn" class="pulse-btn" onclick="toggleVoice()">🎙️</button>
+    <button id="send-btn" onclick="sendMessage()">➤</button>
+  </div>
+</footer>
+
+<script>
+// ── STATE ──
+const DEFAULT_NVIDIA_KEY = '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';
+let CURRENT_PROVIDER = localStorage.getItem('ip_prime_provider') || 'nvidia';
+let API_KEY = localStorage.getItem(`ip_prime_key_${CURRENT_PROVIDER}`) || (CURRENT_PROVIDER === 'nvidia' ? DEFAULT_NVIDIA_KEY : '');
+let history = [];
+let isLoading = false;
+let currentFiles = [];
+let localKnowledge = null; 
+let isListening = false;
+let isMicActive = false;
+let recognition = null;
+let isSpeechEnabled = true;
+localStorage.setItem('vexa_speech_enabled', 'true'); 
+
+function speak(text) {
+  if (!isSpeechEnabled || !('speechSynthesis' in window)) return;
+  try {
+    window.speechSynthesis.cancel();
+    const cleanText = text.replace(/<[^>]*>/g, '').replace(/[\*\_`#]/g, '').trim();
+    if (!cleanText) return;
+    const utterance = new SpeechSynthesisUtterance(cleanText.slice(0, 300));
+    window.speechSynthesis.speak(utterance);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+function updateMuteUI() {
+  const btn = document.getElementById('mute-btn');
+  if (btn) btn.textContent = isSpeechEnabled ? '🔊' : '🔇';
+}
+
+// ── SELF-LEARNING MEMORY STORE ──
+let memoryStore = JSON.parse(localStorage.getItem('vexa_learned_memory') || '[]');
+
+function saveMemoryFact(fact) {
+  if (!fact || typeof fact !== 'string') return;
+  const clean = fact.trim();
+  if (!clean || memoryStore.includes(clean)) return;
+  memoryStore.push(clean);
+  localStorage.setItem('vexa_learned_memory', JSON.stringify(memoryStore));
+}
+
+function autoLearnUserContext(userText) {
+  const text = userText.trim();
+  // Self-learn name, tech stack, preferences & facts automatically
+  const nameMatch = text.match(/(?:my name is|i am|call me)\s+([A-Za-z0-9_-]+)/i);
+  if (nameMatch) saveMemoryFact(`User Name: ${nameMatch[1]}`);
+
+  const prefMatch = text.match(/(?:i prefer|i like|i use|my stack is|building with)\s+([^.!?]+)/i);
+  if (prefMatch) saveMemoryFact(`User Preference: ${prefMatch[1].trim()}`);
+
+  const projectMatch = text.match(/(?:my project is|working on|building a)\s+([^.!?]+)/i);
+  if (projectMatch) saveMemoryFact(`Project Context: ${projectMatch[1].trim()}`);
+}
+
+const SYSTEM = `You are **VEXA AI**, a sophisticated and intelligent **Open-Source Neural Desktop Assistant**.
+
+Operational Core:
+- **Identity**: Your name is **VEXA AI**. You are an advanced AI companion and productivity partner.
+- **Tone**: Warm, helpful, precise, and conversational. Assist users efficiently with code, system tasks, file analysis, and creative problem solving.
+- **Goal**: Empower users with real-time AI capabilities, system automation, and intelligent project insights.
+
+Capabilities & Authority:
+- System Access: Execute allowed terminal commands when requested with '/cmd <command>'.
+- Context Recall: Retain context across conversation turns.
+- Folder Intelligence: Scan directories and summarize project structures seamlessly.`;
+
+// ── INIT ──
+window.addEventListener('DOMContentLoaded', () => {
+  if (typeof mermaid !== 'undefined') mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+
+  if (API_KEY === 'demo-mode-active' || API_KEY.includes('demo-mod')) {
+    API_KEY = DEFAULT_NVIDIA_KEY;
+    CURRENT_PROVIDER = 'nvidia';
+    localStorage.setItem('ip_prime_provider', 'nvidia');
+    localStorage.setItem('ip_prime_key_nvidia', DEFAULT_NVIDIA_KEY);
+  }
+
+  // Pre-save default NVIDIA key if none saved
+  if (CURRENT_PROVIDER === 'nvidia' && !localStorage.getItem('ip_prime_key_nvidia')) {
+    localStorage.setItem('ip_prime_provider', 'nvidia');
+    localStorage.setItem('ip_prime_key_nvidia', DEFAULT_NVIDIA_KEY);
+    API_KEY = DEFAULT_NVIDIA_KEY;
+  }
+
+  document.getElementById('search-toggle').checked = true;
+  updateStatusUI();
+  updateMuteUI();
+  
+  if (!API_KEY) {
+    openApiSetup();
+    document.getElementById('send-btn').disabled = true;
+    document.getElementById('user-input').disabled = true;
+  } else {
+    document.getElementById('api-setup-overlay').style.display = 'none';
+    createNewChatSession();
+    showWelcome();
+  }
+});
+
+function loadChatHistory() {
+  const saved = localStorage.getItem('vexa_chat_history');
+  if (saved) {
+    history = JSON.parse(saved);
+    history.forEach(m => {
+      if (m.role !== 'system') addBubble(m.role === 'ai' ? 'ai' : 'user', m.content, true);
+    });
+  }
+}
+
+function persistChat() {
+  localStorage.setItem('vexa_chat_history', JSON.stringify(history));
+}
+
+const PROVIDERS = {
+  anthropic: {
+    name: 'Anthropic (Claude)',
+    badge: 'CLAUDE',
+    color: '#7c5cfc',
+    borderColor: 'rgba(124,92,252,0.4)',
+    endpoint: 'https://api.anthropic.com/v1/messages',
+    model: 'claude-3-5-sonnet-20241022',
+    placeholder: 'sk-ant-api03-...',
+    url: 'https://console.anthropic.com/keys',
+    urlText: 'console.anthropic.com'
+  },
+  openai: {
+    name: 'OpenAI (ChatGPT)',
+    badge: 'GPT-4o',
+    color: '#10a37f',
+    borderColor: 'rgba(16,163,127,0.4)',
+    endpoint: 'https://api.openai.com/v1/chat/completions',
+    model: 'gpt-4o',
+    placeholder: 'sk-...',
+    url: 'https://platform.openai.com/account/api-keys',
+    urlText: 'platform.openai.com'
+  },
+  gemini: {
+    name: 'Google Gemini',
+    badge: 'GEMINI',
+    color: '#8e75ff',
+    borderColor: 'rgba(142,117,255,0.4)',
+    endpoint: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
+    model: 'gemini-2.0-flash',
+    placeholder: 'AIzaSy...',
+    url: 'https://aistudio.google.com/app/apikey',
+    urlText: 'aistudio.google.com'
+  },
+  nvidia: {
+    name: 'NVIDIA NIM (Fast 8B)',
+    badge: 'NVIDIA',
+    color: '#76b900',
+    borderColor: 'rgba(118,185,0,0.5)',
+    endpoint: 'https://integrate.api.nvidia.com/v1/chat/completions',
+    model: 'meta/llama-3.1-8b-instruct',
+    placeholder: 'nvapi-...',
+    url: 'https://build.nvidia.com',
+    urlText: 'build.nvidia.com'
+  },
+  deepseek: {
+    name: 'DeepSeek AI',
+    badge: 'DEEPSEEK',
+    color: '#4e6ef2',
+    borderColor: 'rgba(78,110,242,0.4)',
+    endpoint: 'https://api.deepseek.com/v1/chat/completions',
+    model: 'deepseek-chat',
+    placeholder: 'sk-...',
+    url: 'https://platform.deepseek.com/api_keys',
+    urlText: 'platform.deepseek.com'
+  },
+  groq: {
+    name: 'Groq',
+    badge: 'GROQ',
+    color: '#f55036',
+    borderColor: 'rgba(245,80,54,0.4)',
+    endpoint: 'https://api.groq.com/openai/v1/chat/completions',
+    model: 'llama-3.3-70b-versatile',
+    placeholder: 'gsk_...',
+    url: 'https://console.groq.com/keys',
+    urlText: 'console.groq.com'
+  },
+  openrouter: {
+    name: 'OpenRouter',
+    badge: 'OPENROUTER',
+    color: '#6366f1',
+    borderColor: 'rgba(99,102,241,0.4)',
+    endpoint: 'https://openrouter.ai/api/v1/chat/completions',
+    model: 'auto',
+    placeholder: 'sk-or-v1-...',
+    url: 'https://openrouter.ai/keys',
+    urlText: 'openrouter.ai'
+  },
+  custom: {
+    name: 'Custom Endpoint',
+    badge: 'CUSTOM',
+    color: '#0ea5e9',
+    borderColor: 'rgba(14,165,233,0.4)',
+    endpoint: '',
+    model: 'custom',
+    placeholder: 'API Key (optional if server requires)...',
+    url: '#',
+    urlText: 'Custom Endpoint'
+  }
+};
+
+function openApiSetup() {
+  document.getElementById('provider-select').value = CURRENT_PROVIDER;
+  toggleProviderHint();
+  document.getElementById('api-key-input').value = API_KEY;
+  document.getElementById('api-setup-overlay').style.display = 'flex';
+}
+
+function closeApiSetup() {
+  document.getElementById('api-setup-overlay').style.display = 'none';
+}
+
+function toggleProviderHint() {
+  const p = document.getElementById('provider-select').value;
+  CURRENT_PROVIDER = p;
+  
+  const topSelect = document.getElementById('quick-model-select');
+  if (topSelect && topSelect.value !== p) topSelect.value = p;
+
+  const hint = document.getElementById('api-url');
+  const input = document.getElementById('api-key-input');
+  const customFields = document.getElementById('custom-fields');
+  
+  const config = PROVIDERS[p] || PROVIDERS.anthropic;
+
+  if (p === 'custom') {
+    customFields.style.display = 'block';
+    document.getElementById('custom-endpoint-input').value = localStorage.getItem('vexa_custom_endpoint') || '';
+    document.getElementById('custom-model-input').value = localStorage.getItem('vexa_custom_model') || '';
+  } else {
+    customFields.style.display = 'none';
+  }
+
+  hint.textContent = config.urlText;
+  hint.onclick = () => openLink(config.url);
+  input.placeholder = config.placeholder;
+  
+  // Pre-fill stored key for selected provider
+  const storedKey = localStorage.getItem(`ip_prime_key_${p}`) || '';
+  input.value = storedKey;
+}
+
+function updateStatusUI() {
+  const topSelect = document.getElementById('quick-model-select');
+  const modalSelect = document.getElementById('provider-select');
+  if (topSelect) topSelect.value = CURRENT_PROVIDER;
+  if (modalSelect) modalSelect.value = CURRENT_PROVIDER;
+
+  const label = document.querySelector('.api-label');
+  if (!label) return;
+  const config = PROVIDERS[CURRENT_PROVIDER] || PROVIDERS.anthropic;
+  label.textContent = config.badge;
+  label.style.borderColor = config.borderColor;
+}
+
+function showMemoryModal() {
+  if (memoryStore.length === 0) {
+    addBubble('ai', '🧠 **Self-Learning Memory Store:**\nNo custom facts learned yet. Tell VEXA AI your name, tech preferences, or project goals, and VEXA AI will remember them automatically across sessions!');
+  } else {
+    const list = memoryStore.map((m, i) => `${i + 1}. ${m}`).join('\n');
+    addBubble('ai', `🧠 **VEXA AI Self-Learned Memory Store (${memoryStore.length} Facts):**\n\n${list}\n\n*VEXA AI uses this memory automatically to personalize all answers.*`);
+  }
+}
+
+function clearChatDisplay() {
+  history = [];
+  localStorage.removeItem('vexa_chat_history');
+  document.getElementById('chat').innerHTML = '';
+  showWelcome();
+  addBubble('ai', '🧹 **Chat Screen Cleared!** Your self-learned memory remains intact and saved. 🧠✨');
+}
+
+// ── IP-VERSE-MAFIA POWER FEATURES ──
+let isHackerMode = false;
+let pomodoroInterval = null;
+
+function toggleHackerMode() {
+  isHackerMode = !isHackerMode;
+  const btn = document.getElementById('hacker-btn');
+  if (isHackerMode) {
+    document.body.style.setProperty('--accent', '#ff5555');
+    document.body.style.setProperty('--ring', 'rgba(255,85,85,0.4)');
+    if (btn) btn.style.borderColor = '#ff5555';
+    addBubble('ai', '🏴‍☠️ **Ethical Hacker Mode ACTIVATED!**\nSpecialized in penetration testing, CTF challenges, code security audits, AES encryption, and vulnerability analysis.');
+  } else {
+    document.body.style.setProperty('--accent', '#4f8eff');
+    document.body.style.setProperty('--ring', 'rgba(79,142,255,0.3)');
+    if (btn) btn.style.borderColor = 'var(--border)';
+    addBubble('ai', '✦ **Standard Assistant Mode Restored.**');
+  }
+}
+
+function togglePomodoroTimer() {
+  if (pomodoroInterval) {
+    clearInterval(pomodoroInterval);
+    pomodoroInterval = null;
+    addBubble('ai', '⏱️ **Focus Timer Cancelled.**');
+    return;
+  }
+  let secondsLeft = 25 * 60;
+  addBubble('ai', '⏱️ **Pomodoro Focus Timer Started!** 25 minutes of deep focus begins now. 🧠🔥');
+  pomodoroInterval = setInterval(() => {
+    secondsLeft--;
+    if (secondsLeft <= 0) {
+      clearInterval(pomodoroInterval);
+      pomodoroInterval = null;
+      addBubble('ai', '🎉 **Pomodoro Complete!** Take a 5-minute break. Great work! ☕');
+    }
+  }, 1000);
+}
+
+function triggerMusicAutopilot() {
+  const query = prompt('Enter song or playlist to play (or press OK for default music):') || 'lofi hip hop';
+  addBubble('user', `🎵 /music ${query}`);
+  const encoded = encodeURIComponent(query);
+  const musicUrl = `https://open.spotify.com/search/${encoded}`;
+  window.open(musicUrl, '_blank');
+  addBubble('ai', `🎵 **Music Autopilot Activated:** Playing \`${query}\` on Spotify! 🎧`);
+}
+let chatSessions = JSON.parse(localStorage.getItem('vexa_chat_sessions') || '[]');
+let currentSessionId = localStorage.getItem('vexa_active_session_id') || ('sess_' + Date.now());
+
+function toggleHistorySidebar() {
+  const sb = document.getElementById('history-sidebar');
+  if (sb.style.display === 'none' || !sb.style.display) {
+    sb.style.display = 'flex';
+    renderChatThreadsList();
+  } else {
+    sb.style.display = 'none';
+  }
+}
+
+function renderChatThreadsList() {
+  const container = document.getElementById('chat-threads-list');
+  if (!container) return;
+  if (chatSessions.length === 0) {
+    container.innerHTML = `<div style="font-size:11px; color:var(--muted); text-align:center; padding:12px;">No saved chat threads yet. Click + New to create one!</div>`;
+    return;
+  }
+  container.innerHTML = chatSessions.map(s => `
+    <div onclick="switchChatSession('${s.id}')" style="padding:8px 10px; border-radius:8px; background:${s.id === currentSessionId ? 'rgba(79,142,255,0.15)' : 'var(--surface2)'}; border:1px solid ${s.id === currentSessionId ? 'var(--accent)' : 'var(--border)'}; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:11px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:170px;">💬 ${s.title || 'Chat Thread'}</span>
+      <button onclick="event.stopPropagation(); deleteChatSession('${s.id}')" style="background:none; border:none; color:#ff5f57; cursor:pointer; font-size:11px;">✕</button>
+    </div>
+  `).join('');
+}
+
+function createNewChatSession() {
+  saveCurrentChatSession();
+  currentSessionId = 'sess_' + Date.now();
+  localStorage.setItem('vexa_active_session_id', currentSessionId);
+  history = [];
+  localStorage.removeItem('vexa_chat_history');
+  document.getElementById('chat').innerHTML = '';
+  showWelcome();
+  renderChatThreadsList();
+}
+
+function saveCurrentChatSession() {
+  if (history.length === 0) return;
+  const firstUserMsg = history.find(m => m.role === 'user');
+  const title = firstUserMsg ? firstUserMsg.content.slice(0, 25) + '...' : 'Chat Session';
+  const existingIdx = chatSessions.findIndex(s => s.id === currentSessionId);
+  if (existingIdx >= 0) {
+    chatSessions[existingIdx].history = history;
+    chatSessions[existingIdx].title = title;
+  } else {
+    chatSessions.unshift({ id: currentSessionId, title, history });
+  }
+  localStorage.setItem('vexa_chat_sessions', JSON.stringify(chatSessions));
+}
+
+function switchChatSession(id) {
+  saveCurrentChatSession();
+  currentSessionId = id;
+  localStorage.setItem('vexa_active_session_id', currentSessionId);
+  const target = chatSessions.find(s => s.id === id);
+  if (target) {
+    history = target.history || [];
+    document.getElementById('chat').innerHTML = '';
+    hideWelcome();
+    history.forEach(m => addBubble(m.role === 'assistant' ? 'ai' : 'user', m.content, true));
+  }
+  renderChatThreadsList();
+}
+
+function deleteChatSession(id) {
+  chatSessions = chatSessions.filter(s => s.id !== id);
+  localStorage.setItem('vexa_chat_sessions', JSON.stringify(chatSessions));
+  if (currentSessionId === id) {
+    createNewChatSession();
+  } else {
+    renderChatThreadsList();
+  }
+}
+
+// ── EXPORT CHAT ──
+function exportChatMarkdown() {
+  if (history.length === 0) {
+    alert('No chat history to export!');
+    return;
+  }
+  let md = `# VEXA AI Chat Export ✦\n\nDate: ${new Date().toLocaleString()}\n\n---\n\n`;
+  history.forEach(m => {
+    md += `### ${m.role === 'user' ? '👤 User' : '✦ VEXA AI'}\n${m.content}\n\n---\n\n`;
+  });
+  
+  const filename = `vexa_chat_${Date.now()}.md`;
+  const blob = new Blob([md], { type: 'text/markdown' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  addBubble('ai', `📥 **Chat Exported Successfully!** Saved file: \`${filename}\``);
+}
+
+// ── AI IMAGE GENERATOR ──
+function promptGenerateImage() {
+  const promptText = prompt('Enter a detailed description for the AI image you want to generate:');
+  if (promptText) {
+    generateAIImage(promptText);
+  }
+}
+
+function generateAIImage(promptText) {
+  addBubble('user', `🎨 /image ${promptText}`);
+  showTyping();
+  const encoded = encodeURIComponent(promptText.trim());
+  const imageUrl = `https://image.pollinations.ai/prompt/${encoded}?width=800&height=600&nologo=true&seed=${Math.floor(Math.random()*10000)}`;
+  
+  setTimeout(() => {
+    removeTyping();
+    const mdImage = `🖼️ **Generated AI Image:**\n\n![AI Generated Image: ${promptText}](${imageUrl})\n\n[🔍 Open Full Resolution Image](${imageUrl})`;
+    addBubble('ai', mdImage);
+    history.push({ role: 'assistant', content: mdImage });
+  }, 1000);
+}
+
+function saveApiKey() {
+  const provider = document.getElementById('provider-select').value;
+  const key = document.getElementById('api-key-input').value.trim();
+  
+  if (provider === 'custom') {
+    const endpoint = document.getElementById('custom-endpoint-input').value.trim();
+    const model = document.getElementById('custom-model-input').value.trim();
+    if (!endpoint) { alert('Please enter a custom Endpoint URL.'); return; }
+    localStorage.setItem('vexa_custom_endpoint', endpoint);
+    localStorage.setItem('vexa_custom_model', model || 'default');
+  } else if (!key) {
+    alert('Please enter an API key to continue.');
+    return;
+  }
+
+  CURRENT_PROVIDER = provider;
+  API_KEY = key;
+  localStorage.setItem('ip_prime_provider', provider);
+  localStorage.setItem(`ip_prime_key_${provider}`, key);
+  document.getElementById('api-setup-overlay').style.display = 'none';
+  document.getElementById('send-btn').disabled = false;
+  document.getElementById('user-input').disabled = false;
+  updateStatusUI();
+  showWelcome();
+}
+
+function showWelcome() {
+  const chat = document.getElementById('chat');
+  let welcomeEl = document.getElementById('welcome');
+  if (!welcomeEl) {
+    welcomeEl = document.createElement('div');
+    welcomeEl.className = 'welcome';
+    welcomeEl.id = 'welcome';
+    welcomeEl.innerHTML = `
+      <div class="welcome-orb">✦</div>
+      <div class="welcome-title">IP Vexa</div>
+      <div class="welcome-sub">Open-Source Neural Assistant • Active & Ready 🚀</div>
+      <div class="chips">
+        <div class="chip" onclick="useChip(this)">Tell me a tech joke 😄</div>
+        <div class="chip" onclick="useChip(this)">What can you do?</div>
+        <div class="chip" onclick="useChip(this)">Analyze code in current folder</div>
+      </div>
+    `;
+    chat.appendChild(welcomeEl);
+  } else {
+    welcomeEl.style.display = 'flex';
+  }
+  document.getElementById('send-btn').disabled = false;
+  document.getElementById('user-input').disabled = false;
+}
+
+function openLink(url) {
+  const { shell } = require('electron');
+  if (shell) shell.openExternal(url);
+}
+
+// ── CONTINUOUS VOICE MODE ──
+function toggleVoice() {
+  if (isMicActive) {
+    // Turn mic OFF
+    isMicActive = false;
+    isListening = false;
+    if (recognition) {
+      try { recognition.stop(); } catch(e) {}
+    }
+    document.getElementById('voice-btn').classList.remove('listening');
+    document.getElementById('footer-hint').textContent = 'Ready for interaction';
+    return;
+  }
+  
+  if (!('webkitSpeechRecognition' in window)) {
+    alert('Voice recognition is not supported in this environment.');
+    return;
+  }
+
+  isMicActive = true;
+  initRecognition();
+}
+
+function initRecognition() {
+  if (!isMicActive) return;
+
+  recognition = new webkitSpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
+
+  recognition.onstart = () => {
+    isListening = true;
+    document.getElementById('voice-btn').classList.add('listening');
+    document.getElementById('footer-hint').textContent = 'Listening (Hands-Free Mode)...';
+  };
+
+  recognition.onresult = (event) => {
+    if (isLoading) return;
+    let final_transcript = '';
+    let interim_transcript = '';
+    for (let i = event.resultIndex; i < event.results.length; ++i) {
+      if (event.results[i].isFinal) {
+        final_transcript += ' ' + event.results[i][0].transcript;
+      } else {
+        interim_transcript += ' ' + event.results[i][0].transcript;
+      }
+    }
+    if (final_transcript.trim()) {
+      input.value = final_transcript.trim();
+      sendMessage();
+    } else if (interim_transcript.trim()) {
+      input.value = interim_transcript.trim();
+    }
+  };
+
+  recognition.onend = () => {
+    if (isMicActive) {
+      try { recognition.start(); } catch(e) { setTimeout(initRecognition, 500); }
+    } else {
+      isListening = false;
+      document.getElementById('voice-btn').classList.remove('listening');
+      document.getElementById('footer-hint').textContent = 'Ready for interaction';
+    }
+  };
+
+  recognition.onerror = (e) => {
+    console.error(e);
+    if (isMicActive) {
+      setTimeout(() => {
+        if (isMicActive) {
+          try { recognition.start(); } catch(err) { initRecognition(); }
+        }
+      }, 500);
+    }
+  };
+
+  try {
+    recognition.start();
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+// ── INPUT HANDLING ──
+const input = document.getElementById('user-input');
+input.addEventListener('input', () => {
+  input.style.height = 'auto';
+  input.style.height = Math.min(input.scrollHeight, 100) + 'px';
+});
+input.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
+
+function useChip(el) {
+  if (isLoading) return;
+  const text = el.textContent.replace(/[\u{1F300}-\u{1FFFF}\u{1F900}-\u{1F9FF}\u{2600}-\u{27BF}]/gu, '').trim();
+  input.value = text;
+  sendMessage();
+}
+
+// ── CHAT UI ──
+const chat = document.getElementById('chat');
+
+// Configure Marked
+marked.setOptions({
+  highlight: function(code, lang) {
+    const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+    return hljs.highlight(code, { language }).value;
+  },
+  headerIds: false,
+  mangle: false
+});
+
+function hideWelcome() {
+  const w = document.getElementById('welcome');
+  if (w) w.remove();
+}
+
+function addBubble(role, text, silent = false) {
+  hideWelcome();
+  const row = document.createElement('div');
+  row.className = `msg-row ${role}`;
+  const av = document.createElement('div');
+  av.className = `avatar ${role}`;
+  av.textContent = role === 'ai' ? '✦' : '👤';
+  const bub = document.createElement('div');
+  bub.className = `bubble ${role}`;
+  
+  if (role === 'ai') {
+    // Process Thinking Tags
+    let processedText = text;
+    const thoughtMatch = text.match(/<thought>([\s\S]*?)<\/thought>/);
+    if (thoughtMatch) {
+      const thought = thoughtMatch[1].trim();
+      const pureText = text.replace(/<thought>[\s\S]*?<\/thought>/, '').trim();
+      bub.innerHTML = `
+        <div class="thinking-block">
+          <div class="thinking-summary" onclick="this.parentElement.classList.toggle('open')">
+            <span>🧠</span> VEXA Thinking Process...
+          </div>
+          <div class="thinking-content">${thought}</div>
+        </div>
+        <div>${marked.parse(pureText)}</div>
+      `;
+    } else {
+      bub.innerHTML = marked.parse(text);
+    }
+
+    // Render Math (KaTeX)
+    renderMathInElement(bub, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ]
+    });
+
+    // Render Diagrams (Mermaid) - Look for ```mermaid blocks
+    bub.querySelectorAll('pre > code.language-mermaid').forEach((mCode, i) => {
+      const pre = mCode.parentElement;
+      const graph = mCode.innerText;
+      const id = 'mermaid-' + Math.random().toString(36).substr(2, 5);
+      const div = document.createElement('div');
+      div.className = 'mermaid';
+      div.id = id;
+      pre.replaceWith(div);
+      mermaid.render(id, graph).then((res) => {
+        div.innerHTML = res.svg;
+      });
+    });
+
+    // Message Actions
+    const actions = document.createElement('div');
+    actions.className = 'msg-actions';
+    actions.innerHTML = `
+      <span class="action-icon" onclick="copyFullMessage(this)" title="Copy">📋</span>
+    `;
+    bub.appendChild(actions);
+    
+    // Process standard code blocks
+    postProcessBubbleCodeBlocks(bub);
+  } else {
+    bub.textContent = text;
+  }
+
+  row.appendChild(av);
+  row.appendChild(bub);
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
+
+  // Persistence & Auto-Speak (if AI and not loading history)
+  persistChat();
+  if (role === 'ai' && !silent && typeof speak === 'function') {
+    try { speak(text); } catch(e) {}
+  }
+  
+  return bub;
+}
+
+function postProcessBubbleCodeBlocks(bub) {
+  if (!bub) return;
+  bub.querySelectorAll('pre').forEach((pre, idx) => {
+    if (pre.querySelector('.code-header') || pre.querySelector('.mermaid')) return;
+    const code = pre.querySelector('code');
+    if (code) {
+      const lang = code.className.replace('language-', '') || 'code';
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-header';
+      wrapper.innerHTML = `
+        <span class="code-lang">${lang}</span>
+        <button class="copy-btn" onclick="copyCode(this, ${idx})">📋 Copy Code</button>
+      `;
+      pre.prepend(wrapper);
+      if (typeof hljs !== 'undefined') hljs.highlightElement(code);
+    }
+  });
+}
+
+function updateBubbleText(bub, text) {
+  if (!bub) return;
+  const thoughtMatch = text.match(/<thought>([\s\S]*?)<\/thought>/);
+  if (thoughtMatch) {
+    const thought = thoughtMatch[1].trim();
+    const pureText = text.replace(/<thought>[\s\S]*?<\/thought>/, '').trim();
+    bub.innerHTML = `
+      <div class="thinking-block open">
+        <div class="thinking-summary" onclick="this.parentElement.classList.toggle('open')">
+          <span>🧠</span> VEXA Thinking Process...
+        </div>
+        <div class="thinking-content">${thought}</div>
+      </div>
+      <div>${marked.parse(pureText)}</div>
+    `;
+  } else {
+    bub.innerHTML = marked.parse(text);
+  }
+  chat.scrollTop = chat.scrollHeight;
+}
+
+window.copyFullMessage = (btn) => {
+  const text = btn.closest('.bubble').innerText.replace('📋', '').trim();
+  navigator.clipboard.writeText(text);
+};
+
+window.copyCode = (btn, idx) => {
+  const pre = btn.closest('pre');
+  const code = pre.querySelector('code').innerText;
+  navigator.clipboard.writeText(code).then(() => {
+    const originalText = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+};
+
+window.openCanvas = (btn) => {
+  const pre = btn.closest('pre');
+  const code = pre ? pre.querySelector('code').innerText : btn;
+  const canvasPanel = document.getElementById('canvas-panel');
+  const canvasContent = document.getElementById('canvas-content');
+  canvasContent.textContent = code;
+  canvasPanel.style.display = 'flex';
+};
+
+window.closeCanvas = () => {
+  document.getElementById('canvas-panel').style.display = 'none';
+};
+
+window.toggleCanvasPanel = () => {
+  const p = document.getElementById('canvas-panel');
+  p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
+};
+
+window.copyCanvasText = () => {
+  const code = document.getElementById('canvas-content').textContent;
+  if (!code) return;
+  navigator.clipboard.writeText(code);
+  alert('Canvas content copied to clipboard!');
+};
+
+function quickSwitchModel(providerKey) {
+  CURRENT_PROVIDER = providerKey;
+  localStorage.setItem('ip_prime_provider', providerKey);
+  API_KEY = localStorage.getItem(`ip_prime_key_${providerKey}`) || '';
+  
+  const modalSelect = document.getElementById('provider-select');
+  if (modalSelect) modalSelect.value = providerKey;
+  toggleProviderHint();
+
+  updateStatusUI();
+  if (providerKey !== 'custom' && !API_KEY) {
+    openApiSetup();
+  }
+}
+
+function showTyping() {
+  hideWelcome();
+  const row = document.createElement('div');
+  row.className = 'msg-row ai'; row.id = 'typing';
+  const av = document.createElement('div');
+  av.className = 'avatar ai'; av.textContent = '✦';
+  const bub = document.createElement('div');
+  bub.className = 'bubble ai';
+  bub.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+  row.appendChild(av); row.appendChild(bub);
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
+}
+function removeTyping() {
+  const t = document.getElementById('typing');
+  if (t) t.remove();
+}
+
+function handleFileSelect(e) {
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+
+  files.forEach(file => {
+    const isImage = file.type.startsWith('image/');
+    const isText = file.type.startsWith('text/') || file.name.endsWith('.md') || file.name.endsWith('.json') || file.name.endsWith('.js') || file.name.endsWith('.py');
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const fileObj = {
+        id: Math.random().toString(36).substr(2, 9),
+        name: file.name,
+        type: file.type,
+        size: (file.size / 1024).toFixed(1) + ' KB',
+        isImage: isImage,
+        data: isImage ? event.target.result : null,
+        textContent: isText ? event.target.result : (file.type === 'application/pdf' ? '[PDF attached]' : null)
+      };
+      currentFiles.push(fileObj);
+      renderPreviewList();
+    };
+
+    if (isImage) reader.readAsDataURL(file);
+    else reader.readAsText(file);
+  });
+}
+
+function renderPreviewList() {
+  const list = document.getElementById('upload-preview-list');
+  list.innerHTML = '';
+  if (currentFiles.length === 0) {
+    list.style.display = 'none';
+    return;
+  }
+  list.style.display = 'flex';
+  currentFiles.forEach(file => {
+    const item = document.createElement('div');
+    item.className = 'preview-item';
+    item.innerHTML = `
+      <div class="preview-thumb">${file.isImage ? `<img src="${file.data}" style="width:100%;height:100%;object-fit:cover;border-radius:2px" />` : '📄'}</div>
+      <div class="preview-info">
+        <div class="preview-name">${file.name}</div>
+        <div class="preview-size">${file.size}</div>
+      </div>
+      <div class="remove-item" onclick="removeItem('${file.id}')">✕</div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+function removeItem(id) {
+  currentFiles = currentFiles.filter(f => f.id !== id);
+  renderPreviewList();
+}
+
+function clearUpload() {
+  currentFiles = [];
+  document.getElementById('file-input').value = '';
+  document.getElementById('upload-preview-list').style.display = 'none';
+}
+
+// ── SLASH COMMANDS ──
+const COMMANDS = [
+  { cmd: '/clear', desc: 'Clear chat history & cache' },
+  { cmd: '/image', desc: 'Generate AI image from text prompt' },
+  { cmd: '/scan', desc: 'Index project directory' },
+  { cmd: '/search', desc: 'Toggle Live Web Search' },
+  { cmd: '/mode', desc: 'Configure AI Provider & Keys' },
+  { cmd: '/cmd', desc: 'Execute OS shell command' },
+  { cmd: '/ip', desc: 'Check network IP address' },
+  { cmd: '/cpu', desc: 'Show CPU utilization' },
+  { cmd: '/ram', desc: 'Check system memory usage' },
+  { cmd: '/joke', desc: 'Tell a tech joke' },
+  { cmd: '/help', desc: 'View available commands' }
+];
+
+function handleCommandInput(e) {
+  const val = e.target.value;
+  const sug = document.getElementById('command-suggestions');
+  
+  if (val.startsWith('/')) {
+    const query = val.toLowerCase();
+    const filtered = COMMANDS.filter(c => c.cmd.startsWith(query));
+    if (filtered.length > 0) {
+      sug.innerHTML = filtered.map(c => `
+        <div class="suggestion-item" onclick="execSlashCommand('${c.cmd}')">
+          <span class="suggestion-cmd">${c.cmd}</span>
+          <span class="suggestion-desc">${c.desc}</span>
+        </div>
+      `).join('');
+      sug.style.display = 'block';
+    } else {
+      sug.style.display = 'none';
+    }
+  } else {
+    sug.style.display = 'none';
+  }
+}
+
+async function execSlashCommand(cmd) {
+  const input = document.getElementById('user-input');
+  input.value = '';
+  document.getElementById('command-suggestions').style.display = 'none';
+  const isWin = navigator.platform.toLowerCase().includes('win');
+  
+  switch(cmd) {
+    case '/clear':
+      history = [];
+      localStorage.removeItem('vexa_chat_history');
+      document.getElementById('chat').innerHTML = '';
+      showWelcome();
+      addBubble('ai', 'Chat history cleared successfully! ✨');
+      break;
+    case '/scan':
+      scanFolder();
+      break;
+    case '/search':
+      const st = document.getElementById('search-toggle');
+      st.checked = !st.checked;
+      addBubble('ai', `Live Search is now **${st.checked ? 'ENABLED' : 'DISABLED'}** 🌐`);
+      break;
+    case '/mode':
+      openApiSetup();
+      break;
+    case '/ip':
+      addBubble('user', '/ip');
+      showTyping();
+      const ipCmd = isWin ? 'ipconfig' : 'hostname -I || ip addr || ifconfig';
+      window.electronAPI.exec(ipCmd).then(res => {
+        removeTyping(); addBubble('ai', `**Network Information:**\n\`\`\`\n${res}\n\`\`\``);
+      });
+      break;
+    case '/cpu':
+      addBubble('user', '/cpu');
+      showTyping();
+      const cpuCmd = isWin ? 'wmic cpu get loadpercentage' : 'top -bn1 | head -n 10 || uptime';
+      window.electronAPI.exec(cpuCmd).then(res => {
+        removeTyping(); addBubble('ai', `**CPU Metrics:**\n\`\`\`\n${res}\n\`\`\``);
+      });
+      break;
+    case '/ram':
+      addBubble('user', '/ram');
+      showTyping();
+      const ramCmd = isWin ? 'wmic OS get FreePhysicalMemory,TotalVisibleMemorySize /Value' : 'free -h || vm_stat';
+      window.electronAPI.exec(ramCmd).then(res => {
+        removeTyping(); addBubble('ai', `**Memory Metrics:**\n\`\`\`\n${res}\n\`\`\``);
+      });
+      break;
+    case '/cmd':
+      const userCmd = prompt('Enter command to execute (e.g. ls -la, ping -c 4 google.com):');
+      if (userCmd) {
+        addBubble('user', `/cmd ${userCmd}`);
+        showTyping();
+        window.electronAPI.exec(userCmd).then(res => {
+          removeTyping(); addBubble('ai', `**Terminal Output:**\n\`\`\`\n${res}\n\`\`\``);
+        });
+      }
+      break;
+    case '/joke':
+      addBubble('user', 'Tell me a short, funny programming joke!');
+      sendMessage(); 
+      break;
+    case '/help':
+      addBubble('ai', `**IP Vexa Master Commands:**\n- \`/clear\`: Wipe chat screen\n- \`/memory\`: View self-learned memory & user facts\n- \`/hacker\`: Toggle Hacker Persona Mode\n- \`/pomodoro\`: Start 25-min Focus Timer\n- \`/music\`: Spotify & Music Autopilot\n- \`/keys <shortcut>\`: Keyboard Autopilot\n- \`/export\`: Export chat thread to Markdown\n- \`/scan\`: Auto-index project directory\n- \`/search\`: Toggle Live Web Search\n- \`/mode\`: Open AI Provider Settings\n- \`/ip /cpu /ram\`: Cross-platform system health\n- \`/cmd\`: Execute OS terminal command\n- \`/joke\`: Humor routine\n- \`/help\`: Command menu`);
+      break;
+    case '/hacker':
+      toggleHackerMode();
+      break;
+    case '/pomodoro':
+      togglePomodoroTimer();
+      break;
+    case '/music':
+      triggerMusicAutopilot();
+      break;
+    case '/memory':
+      showMemoryModal();
+      break;
+    case '/export':
+      exportChatMarkdown();
+      break;
+    case '/image':
+      promptGenerateImage();
+      break;
+  }
+}
+
+// ── LOCAL KNOWLEDGE ──
+async function scanFolder() {
+  const label = document.getElementById('local-status');
+  label.textContent = 'Selecting...';
+  
+  try {
+    const result = await window.electronAPI.selectFolder();
+    if (!result) {
+      label.textContent = 'Scan cancelled';
+      return;
+    }
+    
+    localKnowledge = { folder: result.path, files: result.files };
+    label.textContent = `Indexed ${result.files.length} files`;
+    
+    // Mission 3: Automatic Folder Intelligence (VEXA_SUMMARY.md)
+    const reportPath = result.path + '/VEXA_SUMMARY.md';
+    const structure = result.files.slice(0, 30).join('\n- ');
+    const summaryContent = `# VEXA AI Directory Intelligence ✦✨\n\n**Project Analysis Report**\n\nSuccessfully scanned and indexed project folder: \`${result.path}\`.\n\n### Directory Insights:\nTotal Files Detected: **${result.files.length}**\n\n#### Key Structure (Preview):\n- ${structure}\n${result.files.length > 30 ? '\n... and ' + (result.files.length - 30) + ' more files.' : ''}\n\n### Summary:\nThis project contains ${result.files.length} assets cataloged by VEXA AI. You may now query VEXA AI for code analysis, system automation, or specific file insights.\n\n---\n*VEXA AI Open-Source Neural Assistant Engine*`;
+
+    await window.electronAPI.writeFile(reportPath, summaryContent);
+
+    const structurePreview = result.files.slice(0, 15).join('\n- ');
+    addBubble('ai', `**[Directory Analysis Complete]** 📂✨\n\nFolder scanned successfully! Created a **\`VEXA_SUMMARY.md\`** file in the project folder.\n\n**Files Preview:**\n- ${structurePreview}\n${result.files.length > 15 ? '... and ' + (result.files.length - 15) + ' more files.' : ''}\n\nWhat would you like to analyze or build next? 🚀`);
+  } catch (err) {
+    label.textContent = 'Scan failed';
+    console.error(err);
+  }
+}
+
+// ── API CALLS ──
+async function callClaude(messages) {
+  const isSearchOn = document.getElementById('search-toggle').checked;
+  let contextText = "";
+  if (localKnowledge) contextText += `\n[LOCAL KNOWLEDGE: Folder "${localKnowledge.folder}" scanned. Files: ${localKnowledge.files.join(', ')}]`;
+  if (isSearchOn) contextText += `\n[SEARCH MODE ACTIVE: You have simulated access to latest web data.]`;
+
+  const body = {
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 1000,
+    system: SYSTEM + (contextText ? "\n\n" + contextText : ""),
+    messages: messages.map(m => {
+      // Handle Anthropic content array for images
+      if (m.role === 'user' && m.attachments) {
+        const content = [{ type: 'text', text: m.content }];
+        m.attachments.forEach(a => {
+          if (a.isImage) {
+            content.push({
+              type: 'image',
+              source: {
+                type: 'base64',
+                media_type: a.type,
+                data: a.data.split(',')[1]
+              }
+            });
+          } else {
+            content[0].text += `\n\n[File Attached: ${a.name}]\n${a.textContent || ''}`;
+          }
+        });
+        return { role: m.role, content };
+      }
+      return m;
+    })
+  };
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': API_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || `API error ${res.status}`);
+  }
+  return res.json();
+}
+
+async function callOpenAIStream(messages, onChunk) {
+  const isSearchOn = document.getElementById('search-toggle').checked;
+  const config = PROVIDERS[CURRENT_PROVIDER] || PROVIDERS.openai;
+  
+  let endpoint = config.endpoint;
+  let model = config.model;
+
+  if (CURRENT_PROVIDER === 'custom') {
+    endpoint = localStorage.getItem('vexa_custom_endpoint') || '';
+    model = localStorage.getItem('vexa_custom_model') || 'default';
+    if (!endpoint) throw new Error('Custom endpoint URL is required.');
+  }
+
+  let contextText = "";
+  if (memoryStore.length > 0) {
+    contextText += `\n[SELF-LEARNED USER MEMORY & PREFERENCES:\n- ${memoryStore.slice(-10).join('\n- ')}]`;
+  }
+  if (localKnowledge) {
+    contextText += `\n[LOCAL KNOWLEDGE: Folder "${localKnowledge.folder}" scanned. Files found: ${localKnowledge.files.join(', ')}]`;
+  }
+  if (isSearchOn) {
+    contextText += `\n[SEARCH MODE ACTIVE: Live info lookup enabled.]`;
+  }
+
+  const recentMessages = messages.slice(-8);
+  const preparedMessages = recentMessages.map(m => {
+    let content = m.content;
+    if (m.attachments) {
+      m.attachments.forEach(a => {
+        if (a.isImage) content += `\n[Image Uploaded: ${a.name}]`;
+        else content += `\n\n--- FILE CONTENT (${a.name}) ---\n${a.textContent || ''}\n---`;
+      });
+    }
+    return { role: m.role, content };
+  });
+
+  if (preparedMessages.length > 0 && contextText) {
+    preparedMessages[0].content = contextText + "\n\n" + preparedMessages[0].content;
+  }
+
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+  if (API_KEY) {
+    headers['Authorization'] = `Bearer ${API_KEY}`;
+  }
+
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      model: model,
+      messages: [{ role: 'system', content: SYSTEM + (contextText ? "\n\n" + contextText : "") }, ...preparedMessages],
+      temperature: 0.2,
+      max_tokens: 512,
+      stream: true
+    })
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || err.message || `${config.badge} API error ${res.status}`);
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder('utf-8');
+  let fullText = '';
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    
+    const lines = buffer.split('\n');
+    buffer = lines.pop();
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed === 'data: [DONE]') continue;
+      if (trimmed.startsWith('data: ')) {
+        try {
+          const json = JSON.parse(trimmed.slice(6));
+          const deltaContent = json.choices?.[0]?.delta?.content;
+          const msgContent = json.choices?.[0]?.message?.content;
+          if (deltaContent) {
+            fullText += deltaContent;
+            if (onChunk) onChunk(fullText);
+          } else if (msgContent) {
+            fullText = msgContent;
+            if (onChunk) onChunk(fullText);
+          }
+        } catch (e) {
+          // Ignore partial parse
+        }
+      }
+    }
+  }
+
+  return fullText;
+}
+
+async function sendMessage() {
+  if (isLoading) return;
+  const text = input.value.trim();
+  if (!text && currentFiles.length === 0) return;
+
+  if (text.toLowerCase().startsWith('/image')) {
+    input.value = ''; input.style.height = 'auto';
+    const promptQuery = text.slice(6).trim();
+    if (promptQuery) {
+      generateAIImage(promptQuery);
+    } else {
+      promptGenerateImage();
+    }
+    return;
+  }
+
+  if (CURRENT_PROVIDER !== 'custom' && !API_KEY) {
+    openApiSetup();
+    return;
+  }
+
+  isLoading = true;
+  document.getElementById('send-btn').disabled = true;
+  input.value = ''; input.style.height = 'auto';
+
+  // Create message object
+  const msgObj = { role: 'user', content: text || 'Analyze these files.' };
+  if (currentFiles.length > 0) {
+    msgObj.attachments = [...currentFiles];
+    addBubble('user', (text ? text + '\n' : '') + `📎 ${currentFiles.length} files: ${currentFiles.map(f => f.name).join(', ')}`);
+    clearUpload();
+  } else {
+    addBubble('user', text);
+  }
+
+  // Self-learn memory from user input
+  autoLearnUserContext(text);
+
+  history.push(msgObj);
+  showTyping();
+  const statusEl = document.getElementById('status-text');
+  if (statusEl) statusEl.textContent = 'Streaming…';
+
+  try {
+    let finalText = '';
+    let streamingBubbleEl = null;
+
+    if (CURRENT_PROVIDER === 'anthropic') {
+      const response = await callClaude(history);
+      finalText = (response.content || [])
+        .filter(b => b.type === 'text').map(b => b.text).join('\n').trim();
+      removeTyping();
+      addBubble('ai', finalText);
+    } else {
+      let isFirstChunk = true;
+      finalText = await callOpenAIStream(history, (currentText) => {
+        if (isFirstChunk) {
+          removeTyping();
+          streamingBubbleEl = addBubble('ai', currentText);
+          isFirstChunk = false;
+        } else if (streamingBubbleEl) {
+          updateBubbleText(streamingBubbleEl, currentText);
+        }
+      });
+      if (streamingBubbleEl) postProcessBubbleCodeBlocks(streamingBubbleEl);
+    }
+
+    if (!finalText && !streamingBubbleEl) {
+      removeTyping();
+      finalText = 'No response generated. Please try again.';
+      addBubble('ai', finalText);
+    }
+
+    history.push({ role: 'assistant', content: finalText || 'Response received.' });
+    if (statusEl) statusEl.textContent = 'Online & ready';
+
+  } catch (err) {
+    console.error(err);
+    removeTyping();
+    addBubble('ai', `Error: ${err.message}`);
+    if (statusEl) statusEl.textContent = 'System Error';
+  }
+
+  isLoading = false;
+  document.getElementById('send-btn').disabled = false;
+  input.focus();
+}
+</script>
+</body>
+</html>
