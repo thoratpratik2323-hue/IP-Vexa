@@ -599,9 +599,9 @@
 
 <script>
 // ── STATE ──
-const DEFAULT_NVIDIA_KEY = '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';
+const DEFAULT_NVIDIA_KEY = '';
 let CURRENT_PROVIDER = localStorage.getItem('ip_prime_provider') || 'nvidia';
-let API_KEY = localStorage.getItem(`ip_prime_key_${CURRENT_PROVIDER}`) || (CURRENT_PROVIDER === 'nvidia' ? DEFAULT_NVIDIA_KEY : '');
+let API_KEY = localStorage.getItem(`ip_prime_key_${CURRENT_PROVIDER}`) || '';
 let history = [];
 let isLoading = false;
 let currentFiles = [];
@@ -670,30 +670,16 @@ Capabilities & Authority:
 window.addEventListener('DOMContentLoaded', () => {
   if (typeof mermaid !== 'undefined') mermaid.initialize({ startOnLoad: false, theme: 'dark' });
 
-  if (API_KEY === 'demo-mode-active' || API_KEY.includes('demo-mod')) {
-    API_KEY = DEFAULT_NVIDIA_KEY;
-    CURRENT_PROVIDER = 'nvidia';
-    localStorage.setItem('ip_prime_provider', 'nvidia');
-    localStorage.setItem('ip_prime_key_nvidia', DEFAULT_NVIDIA_KEY);
-  }
-
-  // Pre-save default NVIDIA key if none saved
-  if (CURRENT_PROVIDER === 'nvidia' && !localStorage.getItem('ip_prime_key_nvidia')) {
-    localStorage.setItem('ip_prime_provider', 'nvidia');
-    localStorage.setItem('ip_prime_key_nvidia', DEFAULT_NVIDIA_KEY);
-    API_KEY = DEFAULT_NVIDIA_KEY;
-  }
-
   document.getElementById('search-toggle').checked = true;
   updateStatusUI();
   updateMuteUI();
   
   if (!API_KEY) {
-    openApiSetup();
-    document.getElementById('send-btn').disabled = true;
-    document.getElementById('user-input').disabled = true;
+    openApiSetup(true);
   } else {
     document.getElementById('api-setup-overlay').style.display = 'none';
+    document.getElementById('send-btn').disabled = false;
+    document.getElementById('user-input').disabled = false;
     createNewChatSession();
     showWelcome();
   }
@@ -804,14 +790,28 @@ const PROVIDERS = {
   }
 };
 
-function openApiSetup() {
+function openApiSetup(isMandatory = false) {
   document.getElementById('provider-select').value = CURRENT_PROVIDER;
   toggleProviderHint();
   document.getElementById('api-key-input').value = API_KEY;
   document.getElementById('api-setup-overlay').style.display = 'flex';
+
+  const closeBtn = document.querySelector('.close-modal-btn');
+  if (closeBtn) {
+    closeBtn.style.display = (isMandatory || !API_KEY) ? 'none' : 'block';
+  }
+
+  if (!API_KEY) {
+    document.getElementById('send-btn').disabled = true;
+    document.getElementById('user-input').disabled = true;
+  }
 }
 
 function closeApiSetup() {
+  if (!API_KEY) {
+    alert('Please enter and save an API key to continue using IP Vexa.');
+    return;
+  }
   document.getElementById('api-setup-overlay').style.display = 'none';
 }
 
@@ -1060,9 +1060,14 @@ function saveApiKey() {
   API_KEY = key;
   localStorage.setItem('ip_prime_provider', provider);
   localStorage.setItem(`ip_prime_key_${provider}`, key);
+
   document.getElementById('api-setup-overlay').style.display = 'none';
   document.getElementById('send-btn').disabled = false;
   document.getElementById('user-input').disabled = false;
+
+  const closeBtn = document.querySelector('.close-modal-btn');
+  if (closeBtn) closeBtn.style.display = 'block';
+
   updateStatusUI();
   showWelcome();
 }
