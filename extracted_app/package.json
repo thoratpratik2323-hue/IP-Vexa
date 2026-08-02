@@ -1,7 +1,7 @@
 {
-  "name": "vexa-ai-desktop",
+  "name": "ip-vexa-desktop",
   "version": "2.5.0",
-  "description": "VEXA AI - Open-Source Neural Desktop Assistant",
+  "description": "IP Vexa - Open-Source Neural Desktop Assistant",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
