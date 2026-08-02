@@ -21,7 +21,7 @@
 
 **IP Vexa** is a privacy-first, ultra-fast, open-source desktop neural assistant built to integrate multi-provider AI models, AI image generation, project folder intelligence, OS shell control, and long-term self-learning memory into a sleek glassmorphic desktop environment.
 
-[Features](#-key-features) • [Slash Commands](#-slash-commands) • [AI Image Generator](#-ai-image-generator) • [Quick Start](#-quick-start-guide) • [License](#-license)
+[Features](#-key-features) • [Slash Commands](#-slash-commands) • [AI Image Generator](#-ai-image-generator) • [Requirements](#-requirements--installation) • [Quick Start](#-quick-start-guide) • [License](#-license)
 
 </div>
 
@@ -62,37 +62,12 @@
 
 ---
 
-## 🎨 AI Image Generator
+## 📋 Requirements & Installation
 
-Generate AI images anytime inside IP Vexa:
+See [REQUIREMENTS.md](REQUIREMENTS.md) for full system requirements and 1-click dependency installation options:
 
-```text
-/image A futuristic cyberpunk city with neon lights at night 8k
-```
-
-Or type `/image` to open an interactive prompt dialog!
-
----
-
-## 🛠️ Tech Stack & Architecture
-
-```
-                                  +-----------------------+
-                                  |    IP Vexa Desktop    |
-                                  +-----------+-----------+
-                                              |
-                       +----------------------+----------------------+
-                       |                                             |
-            +----------v----------+                       +----------v----------+
-            |  Electron Main IPC  |                       | Glassmorphic UI (JS)|
-            +----------+----------+                       +----------+----------+
-                       |                                             |
-        +--------------+--------------+             +----------------+----------------+
-        |                             |             |                                 |
-+-------v--------+           +--------v------+ +----v-----------+            +--------v-------+
-| File System FS |           | OS Exec Shell | | Provider Engine|            | Memory Store   |
-+----------------+           +---------------+ +----------------+            +----------------+
-```
+- **1-Click Windows Installer**: Double-click `install_requirements.bat`
+- **1-Click Linux/macOS Installer**: Run `./install_requirements.sh`
 
 ---
 
