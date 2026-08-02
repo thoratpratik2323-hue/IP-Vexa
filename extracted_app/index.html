@@ -595,7 +595,7 @@
   <!-- Quick Action Chips Bar -->
   <div id="quick-chips-bar" style="display:flex; gap:8px; overflow-x:auto; padding:4px 0 8px 0; margin-bottom:4px;">
     <button onclick="sendQuickCommand('/ram')" class="chip-btn" style="background:rgba(124,92,252,0.15); border:1px solid rgba(124,92,252,0.3); color:#a78bfa; padding:4px 10px; border-radius:20px; font-size:11px; cursor:pointer; font-weight:600; white-space:nowrap; display:flex; align-items:center; gap:4px;">⚡ RAM & CPU</button>
-    <button onclick="sendQuickCommand('/image A futuristic glowing cyber assistant concept art')" class="chip-btn" style="background:rgba(236,72,153,0.15); border:1px solid rgba(236,72,153,0.3); color:#f472b6; padding:4px 10px; border-radius:20px; font-size:11px; cursor:pointer; font-weight:600; white-space:nowrap; display:flex; align-items:center; gap:4px;">🎨 AI Image</button>
+    <button onclick="sendQuickCommand('/image Cinematic portrait of a futuristic AI cyberpunk avatar with glowing neon optics, hyperrealistic 8k render')" class="chip-btn" style="background:rgba(236,72,153,0.15); border:1px solid rgba(236,72,153,0.3); color:#f472b6; padding:4px 10px; border-radius:20px; font-size:11px; cursor:pointer; font-weight:600; white-space:nowrap; display:flex; align-items:center; gap:4px;">🎨 AI Image (FLUX.1 8K)</button>
     <button onclick="sendQuickCommand('/scan')" class="chip-btn" style="background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.3); color:#60a5fa; padding:4px 10px; border-radius:20px; font-size:11px; cursor:pointer; font-weight:600; white-space:nowrap; display:flex; align-items:center; gap:4px;">📂 Scan Repo</button>
     <button onclick="sendQuickCommand('/cmd dir')" class="chip-btn" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#34d399; padding:4px 10px; border-radius:20px; font-size:11px; cursor:pointer; font-weight:600; white-space:nowrap; display:flex; align-items:center; gap:4px;">🖥️ Terminal Exec</button>
     <button onclick="showMemoryModal()" class="chip-btn" style="background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:#fbbf24; padding:4px 10px; border-radius:20px; font-size:11px; cursor:pointer; font-weight:600; white-space:nowrap; display:flex; align-items:center; gap:4px;">🧠 Memory</button>
@@ -1051,15 +1051,19 @@ function promptGenerateImage() {
 function generateAIImage(promptText) {
   addBubble('user', `🎨 /image ${promptText}`);
   showTyping();
-  const encoded = encodeURIComponent(promptText.trim());
-  const imageUrl = `https://image.pollinations.ai/prompt/${encoded}?width=800&height=600&nologo=true&seed=${Math.floor(Math.random()*10000)}`;
+  const cleanPrompt = promptText.trim();
+  const encoded = encodeURIComponent(cleanPrompt);
+  const seed = Math.floor(Math.random() * 1000000);
+  
+  // FLUX.1 Ultra HD Model with prompt enhancement and 1024x768 HD resolution
+  const imageUrl = `https://image.pollinations.ai/prompt/${encoded}?width=1024&height=768&model=flux&nologo=true&enhance=true&seed=${seed}`;
   
   setTimeout(() => {
     removeTyping();
-    const mdImage = `🖼️ **Generated AI Image:**\n\n![AI Generated Image: ${promptText}](${imageUrl})\n\n[🔍 Open Full Resolution Image](${imageUrl})`;
+    const mdImage = `🖼️ **Generated AI Artwork** *(FLUX.1 Ultra HD Engine)*\n\n![AI Generated Image: ${cleanPrompt}](${imageUrl})\n\n✨ **Engine**: \`FLUX.1 Realism\` | 📐 **Resolution**: \`1024x768 HD\`\n\n[🔍 View Full Resolution Image](${imageUrl})`;
     addBubble('ai', mdImage);
     history.push({ role: 'assistant', content: mdImage });
-  }, 1000);
+  }, 800);
 }
 
 function saveApiKey() {
