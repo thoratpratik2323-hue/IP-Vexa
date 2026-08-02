@@ -21,7 +21,7 @@
 
 **IP Vexa** is a privacy-first, ultra-fast, open-source desktop neural assistant built to integrate multi-provider AI models, AI image generation, project folder intelligence, OS shell control, and long-term self-learning memory into a sleek glassmorphic desktop environment.
 
-[Features](#-key-features) • [Slash Commands](#-slash-commands) • [AI Image Generator](#-ai-image-generator) • [Requirements](#-requirements--installation) • [Quick Start](#-quick-start-guide) • [License](#-license)
+[Features](#-key-features) • [Slash Commands](#-slash-commands) • [AI Image Generator](#-ai-image-generator) • [Requirements](#-requirements--installation) • [Quick Start](#-quick-start-guide) • [Author & Connect](#-author--connect) • [License](#-license)
 
 </div>
 
@@ -101,8 +101,17 @@ Distributed under the **MIT License**. Free for open-source and commercial distr
 
 ---
 
+## 👨‍💻 Author & Connect
+
 <div align="center">
 
-**Built with ✦ for the AI Developer Community**
+### Built with ✦ by **Pratik Thorat**
+
+[![Portfolio](https://img.shields.io/badge/Portfolio-pratik--pt1908.netlify.app-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)](https://pratik-pt1908.netlify.app)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Pratik%20Thorat-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/pratikpt1908)
+[![Instagram](https://img.shields.io/badge/Instagram-@pratik__pt1908-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/pratik_pt1908/)
+
+**Connect with me:**
+🌐 [Portfolio](https://pratik-pt1908.netlify.app) • 👔 [LinkedIn](https://www.linkedin.com/in/pratikpt1908) • 📸 [Instagram](https://www.instagram.com/pratik_pt1908/)
 
 </div>
