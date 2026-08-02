@@ -1,0 +1,22 @@
+{
+  "name": "vexa-ai-desktop",
+  "version": "2.5.0",
+  "description": "VEXA AI - Open-Source Neural Desktop Assistant",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "ai",
+    "desktop-assistant",
+    "open-source",
+    "electron",
+    "llm",
+    "neural-assistant"
+  ],
+  "author": "Open Source Community",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.2.0"
+  }
+}
