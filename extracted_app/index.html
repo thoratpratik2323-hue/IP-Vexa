@@ -1797,12 +1797,12 @@ async function callOpenAIStream(messages, onChunk) {
           const json = JSON.parse(trimmed.slice(6));
           const deltaContent = json.choices?.[0]?.delta?.content;
           const msgContent = json.choices?.[0]?.message?.content;
-          if (deltaContent) {
+          if (deltaContent !== undefined && deltaContent !== null) {
             fullText += deltaContent;
-            if (onChunk) onChunk(fullText);
-          } else if (msgContent) {
+            if (onChunk && fullText) onChunk(fullText);
+          } else if (msgContent !== undefined && msgContent !== null && msgContent.length > fullText.length) {
             fullText = msgContent;
-            if (onChunk) onChunk(fullText);
+            if (onChunk && fullText) onChunk(fullText);
           }
         } catch (e) {
           // Ignore partial parse
@@ -1871,11 +1871,19 @@ async function sendMessage() {
       let isFirstChunk = true;
       finalText = await callOpenAIStream(history, (currentText) => {
         if (isFirstChunk) {
-          removeTyping();
-          streamingBubbleEl = addBubble('ai', currentText);
           isFirstChunk = false;
+          removeTyping();
+          try {
+            streamingBubbleEl = addBubble('ai', currentText);
+          } catch (e) {
+            console.error(e);
+          }
         } else if (streamingBubbleEl) {
-          updateBubbleText(streamingBubbleEl, currentText);
+          try {
+            updateBubbleText(streamingBubbleEl, currentText);
+          } catch (e) {
+            console.error(e);
+          }
         }
       });
       if (streamingBubbleEl) postProcessBubbleCodeBlocks(streamingBubbleEl);
