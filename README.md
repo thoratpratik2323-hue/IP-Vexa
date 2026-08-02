@@ -1,6 +1,6 @@
 <div align="center">
 
-# ✦ VEXA AI ✦
+# ✦ IP VEXA ✦
 ### *The Ultimate Open-Source Neural Desktop Workspace & AI Companion*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-7c5cfc.svg?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
@@ -12,14 +12,14 @@
 <br/>
 
 ```
-  ____   ____ _______   __ ___    /\     ___ 
-  \   \ /   /|   ____| \  /  \  /  \   |_ _|
-   \   Y   / |  |__    \ \/    \/ /\ \   | | 
-    \     /  |   __|    \  /\  / /__\ \  | | 
-     \___/   |__|____/\  \/  \/_/    \_\|___|
+  ___ _____    _____  _______  ___    /\     ___ 
+ |_ _|  __ \  |  __ \|  ____| \  /  \  /  \   |_ _|
+  | || |__) | | |__) |  |__    \ \/    \/ /\ \   | | 
+  | ||  ___/  |  ___/|   __|    \  /\  / /__\ \  | | 
+ |___|_|      |_|    |__|____/\  \/  \/_/    \_\|___|
 ```
 
-**VEXA AI** is a privacy-first, ultra-fast, open-source desktop neural assistant built to integrate multi-provider AI models, AI image generation, project folder intelligence, OS shell control, and long-term self-learning memory into a sleek glassmorphic desktop environment.
+**IP Vexa** is a privacy-first, ultra-fast, open-source desktop neural assistant built to integrate multi-provider AI models, AI image generation, project folder intelligence, OS shell control, and long-term self-learning memory into a sleek glassmorphic desktop environment.
 
 [Features](#-key-features) • [Slash Commands](#-slash-commands) • [AI Image Generator](#-ai-image-generator) • [Quick Start](#-quick-start-guide) • [License](#-license)
 
@@ -31,7 +31,7 @@
 
 - 🚀 **Universal Multi-LLM Engine**: Switch instantly between **NVIDIA NIM (Llama 3.1)**, **Anthropic Claude 3.5/4**, **OpenAI GPT-4o**, **DeepSeek R1**, **Google Gemini**, **Groq**, **OpenRouter**, and **Custom Endpoints**.
 - 🎨 **Built-In AI Image Generator (`/image`)**: Generate high-resolution AI artwork and visuals directly inside chat using Stable Diffusion models.
-- 📂 **Directory & Codebase Intelligence (`/scan`)**: Index software repositories with 1-click and automatically output a structured `VEXA_SUMMARY.md` project report.
+- 📂 **Directory & Codebase Intelligence (`/scan`)**: Index software repositories with 1-click and automatically output a structured `IP_VEXA_SUMMARY.md` project report.
 - 🎨 **Code & Artifact Side Canvas**: Dedicated slide-out panel for live code rendering, markdown documents, and math.
 - 🧠 **Self-Learning Long-Term Memory (`🧠 Memory`)**: Automatically extracts and retains user preferences, tech stack details, and project context across app restarts.
 - 🖥️ **Native System Shell Execution (`/cmd`, `/cpu`, `/ram`, `/ip`)**: Monitor system health (CPU/RAM/IP) and safely execute terminal commands inside chat.
@@ -47,7 +47,7 @@
 | Command | Action | Description |
 | :--- | :--- | :--- |
 | `/image <prompt>` | **AI Image Generation** | Generates AI artwork/images from text descriptions |
-| `/scan` | **Directory Indexing** | Scans local code folder and creates `VEXA_SUMMARY.md` report |
+| `/scan` | **Directory Indexing** | Scans local code folder and creates `IP_VEXA_SUMMARY.md` report |
 | `/memory` | **Memory Store** | View all self-learned facts and user preferences stored |
 | `/clear` | **Wipe Chat Screen** | Clears visible chat output while keeping learned memory intact |
 | `/export` | **Export Thread** | Exports full conversation log to a formatted `.md` file |
@@ -64,7 +64,7 @@
 
 ## 🎨 AI Image Generator
 
-Generate AI images anytime inside VEXA AI:
+Generate AI images anytime inside IP Vexa:
 
 ```text
 /image A futuristic cyberpunk city with neon lights at night 8k
@@ -78,7 +78,7 @@ Or type `/image` to open an interactive prompt dialog!
 
 ```
                                   +-----------------------+
-                                  |    VEXA AI Desktop    |
+                                  |    IP Vexa Desktop    |
                                   +-----------+-----------+
                                               |
                        +----------------------+----------------------+
@@ -111,7 +111,7 @@ cd IP_VEXA_PORTABLE_FOR_FRIEND/extracted_app
 # Install dependencies (if needed)
 npm install
 
-# Launch VEXA AI
+# Launch IP Vexa
 npm start
 ```
 
