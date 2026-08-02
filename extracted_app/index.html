@@ -590,8 +590,8 @@ let localKnowledge = null;
 let isListening = false;
 let isMicActive = false;
 let recognition = null;
-let isSpeechEnabled = true;
-localStorage.setItem('vexa_speech_enabled', 'true'); 
+let isSpeechEnabled = false;
+localStorage.setItem('vexa_speech_enabled', 'false'); 
 
 function sendQuickCommand(cmd) {
   const input = document.getElementById('user-input');
@@ -602,16 +602,8 @@ function sendQuickCommand(cmd) {
 }
 
 function speak(text) {
-  if (!isSpeechEnabled || !('speechSynthesis' in window)) return;
-  try {
-    window.speechSynthesis.cancel();
-    const cleanText = text.replace(/<[^>]*>/g, '').replace(/[\*\_`#]/g, '').trim();
-    if (!cleanText) return;
-    const utterance = new SpeechSynthesisUtterance(cleanText.slice(0, 300));
-    window.speechSynthesis.speak(utterance);
-  } catch (e) {
-    console.error(e);
-  }
+  // Voice speech synthesis completely disabled
+  return;
 }
 
 function updateMuteUI() {
