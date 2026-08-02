@@ -505,6 +505,10 @@
     <span>🧹</span> Clear Chat
   </button>
 
+  <div id="perf-badge" style="font-size:10px; color:#34d399; background:rgba(16,185,129,0.12); padding:4px 9px; border-radius:12px; font-weight:700; border:1px solid rgba(16,185,129,0.25); display:flex; align-items:center; gap:4px;" title="Real-time latency performance metric">
+    <span>⚡</span> Latency: 180ms
+  </div>
+
   <button class="action-btn" onclick="openApiSetup()" title="Configure AI Provider & API Keys">
     <span>⚙️</span> Settings
   </button>
@@ -588,10 +592,19 @@
   <div id="command-suggestions"></div>
   <div id="upload-preview-list"></div>
 
+  <!-- Quick Action Chips Bar -->
+  <div id="quick-chips-bar" style="display:flex; gap:8px; overflow-x:auto; padding:4px 0 8px 0; margin-bottom:4px;">
+    <button onclick="sendQuickCommand('/ram')" class="chip-btn" style="background:rgba(124,92,252,0.15); border:1px solid rgba(124,92,252,0.3); color:#a78bfa; padding:4px 10px; border-radius:20px; font-size:11px; cursor:pointer; font-weight:600; white-space:nowrap; display:flex; align-items:center; gap:4px;">⚡ RAM & CPU</button>
+    <button onclick="sendQuickCommand('/image A futuristic glowing cyber assistant concept art')" class="chip-btn" style="background:rgba(236,72,153,0.15); border:1px solid rgba(236,72,153,0.3); color:#f472b6; padding:4px 10px; border-radius:20px; font-size:11px; cursor:pointer; font-weight:600; white-space:nowrap; display:flex; align-items:center; gap:4px;">🎨 AI Image</button>
+    <button onclick="sendQuickCommand('/scan')" class="chip-btn" style="background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.3); color:#60a5fa; padding:4px 10px; border-radius:20px; font-size:11px; cursor:pointer; font-weight:600; white-space:nowrap; display:flex; align-items:center; gap:4px;">📂 Scan Repo</button>
+    <button onclick="sendQuickCommand('/cmd dir')" class="chip-btn" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#34d399; padding:4px 10px; border-radius:20px; font-size:11px; cursor:pointer; font-weight:600; white-space:nowrap; display:flex; align-items:center; gap:4px;">🖥️ Terminal Exec</button>
+    <button onclick="showMemoryModal()" class="chip-btn" style="background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:#fbbf24; padding:4px 10px; border-radius:20px; font-size:11px; cursor:pointer; font-weight:600; white-space:nowrap; display:flex; align-items:center; gap:4px;">🧠 Memory</button>
+  </div>
+
   <div class="input-row">
     <input type="file" id="file-input" style="display:none" multiple onchange="handleFileSelect(event)" />
     <button id="upload-btn" onclick="document.getElementById('file-input').click()">📎</button>
-    <textarea id="user-input" rows="1" placeholder="Ask VEXA AI anything..."></textarea>
+    <textarea id="user-input" rows="1" placeholder="Ask IP Vexa anything or type /..."></textarea>
     <button id="voice-btn" class="pulse-btn" onclick="toggleVoice()">🎙️</button>
     <button id="send-btn" onclick="sendMessage()">➤</button>
   </div>
@@ -611,6 +624,14 @@ let isMicActive = false;
 let recognition = null;
 let isSpeechEnabled = true;
 localStorage.setItem('vexa_speech_enabled', 'true'); 
+
+function sendQuickCommand(cmd) {
+  const input = document.getElementById('user-input');
+  if (input) {
+    input.value = cmd;
+    sendMessage();
+  }
+}
 
 function speak(text) {
   if (!isSpeechEnabled || !('speechSynthesis' in window)) return;
