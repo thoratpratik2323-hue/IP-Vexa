@@ -21,7 +21,7 @@
 
 **VEXA AI** is a privacy-first, ultra-fast, open-source desktop neural assistant built to integrate multi-provider AI models, AI image generation, project folder intelligence, OS shell control, and long-term self-learning memory into a sleek glassmorphic desktop environment.
 
-[Features](#-key-features) • [Slash Commands](#-slash-commands) • [AI Image Generator](#-ai-image-generator) • [Quick Start](#-quick-start-guide) • [Bootcamp Pitch](#-bootcamp-presentation-guide) • [License](#-license)
+[Features](#-key-features) • [Slash Commands](#-slash-commands) • [AI Image Generator](#-ai-image-generator) • [Quick Start](#-quick-start-guide) • [License](#-license)
 
 </div>
 
@@ -117,16 +117,6 @@ npm start
 
 #### On Windows Portable Executable:
 - Simply double-click **`IP VEXA.exe`** or **`run_app.bat`** in the root directory.
-
----
-
-## 🏆 Bootcamp Presentation Guide
-
-VEXA AI comes pre-packaged with complete hackathon & bootcamp pitch resources:
-
-- 📜 [BOOTCAMP_PITCH.md](extracted_app/BOOTCAMP_PITCH.md) — 3-Minute Live Presentation Script for Judges
-- 🎯 [WINNING_BOOTCAMP_STRATEGY.md](extracted_app/WINNING_BOOTCAMP_STRATEGY.md) — 1st Prize Strategy & Scoring Secrets
-- 🌐 [ONLINE_SUBMISSION_GUIDE.md](extracted_app/ONLINE_SUBMISSION_GUIDE.md) — Online Submission & Video Demo Checklist
 
 ---
 
