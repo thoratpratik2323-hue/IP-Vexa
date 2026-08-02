@@ -275,10 +275,11 @@
   #api-setup-overlay {
     display: none;
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(5, 7, 12, 0.85);
-    backdrop-filter: blur(12px);
-    z-index: 1000;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(5, 7, 12, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: 10000;
     align-items: center; justify-content: center;
     padding: 20px;
   }
@@ -527,39 +528,6 @@
 
   <!-- Chat Area -->
   <div id="chat" style="flex:1; height:100%; overflow-y:auto;">
-  <!-- API Setup Modal Overlay -->
-  <div id="api-setup-overlay">
-    <div id="api-setup">
-      <button class="close-modal-btn" onclick="closeApiSetup()">✕</button>
-      <h2>🔑 AI Provider & API Setup</h2>
-      <p>Select your preferred AI provider and key to power VEXA AI.</p>
-      
-      <select id="provider-select" onchange="toggleProviderHint()" style="width:100%; margin-bottom:12px; padding:10px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; color:var(--text); font-family:inherit;">
-        <option value="nvidia">NVIDIA NIM (Llama 3.1 8B/405B)</option>
-        <option value="anthropic">Anthropic (Claude 3.5 / 4)</option>
-        <option value="openai">OpenAI (ChatGPT / GPT-4o)</option>
-        <option value="gemini">Google Gemini API</option>
-        <option value="deepseek">DeepSeek AI (R1 / Chat)</option>
-        <option value="groq">Groq (Llama 3.3 70B Fast)</option>
-        <option value="openrouter">OpenRouter (All Models)</option>
-        <option value="custom">Custom OpenAI-Compatible API</option>
-      </select>
-
-      <div id="custom-fields" style="display:none; margin-bottom:10px; margin-top:8px;">
-        <input type="text" id="custom-endpoint-input" placeholder="Endpoint URL e.g. http://localhost:8000/v1/chat/completions" style="width:100%; margin-bottom:8px; padding:8px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text);" />
-        <input type="text" id="custom-model-input" placeholder="Model name e.g. gpt-4o or qwen2.5" style="width:100%; padding:8px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text);" />
-      </div>
-      
-      <input type="password" id="api-key-input" placeholder="Enter API key..." />
-      
-      <button id="save-key-btn" onclick="saveApiKey()">Save & Connect ✦</button>
-
-      <p class="api-hint" id="api-link-hint">
-        Get your API key →
-        <a href="#" id="api-url" onclick="openLink('https://build.nvidia.com')">build.nvidia.com</a>
-      </p>
-    </div>
-  </div>
 
     <!-- Welcome screen -->
     <div class="welcome" id="welcome" style="display:none">
@@ -1910,5 +1878,39 @@ async function sendMessage() {
   input.focus();
 }
 </script>
+
+<!-- Global API Setup Modal Overlay -->
+<div id="api-setup-overlay">
+  <div id="api-setup">
+    <button class="close-modal-btn" onclick="closeApiSetup()">✕</button>
+    <h2>🔑 AI Provider & API Setup</h2>
+    <p>Select your preferred AI provider and key to power IP Vexa.</p>
+    
+    <select id="provider-select" onchange="toggleProviderHint()" style="width:100%; margin-bottom:12px; padding:10px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; color:var(--text); font-family:inherit;">
+      <option value="nvidia">NVIDIA NIM (Llama 3.1 8B/405B)</option>
+      <option value="anthropic">Anthropic (Claude 3.5 / 4)</option>
+      <option value="openai">OpenAI (ChatGPT / GPT-4o)</option>
+      <option value="gemini">Google Gemini API</option>
+      <option value="deepseek">DeepSeek AI (R1 / Chat)</option>
+      <option value="groq">Groq (Llama 3.3 70B Fast)</option>
+      <option value="openrouter">OpenRouter (All Models)</option>
+      <option value="custom">Custom OpenAI-Compatible API</option>
+    </select>
+
+    <div id="custom-fields" style="display:none; margin-bottom:10px; margin-top:8px;">
+      <input type="text" id="custom-endpoint-input" placeholder="Endpoint URL e.g. http://localhost:8000/v1/chat/completions" style="width:100%; margin-bottom:8px; padding:8px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text);" />
+      <input type="text" id="custom-model-input" placeholder="Model name e.g. gpt-4o or qwen2.5" style="width:100%; padding:8px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text);" />
+    </div>
+    
+    <input type="password" id="api-key-input" placeholder="Enter API key..." />
+    
+    <button id="save-key-btn" onclick="saveApiKey()">Save & Connect ✦</button>
+
+    <p class="api-hint" id="api-link-hint">
+      Get your API key →
+      <a href="#" id="api-url" onclick="openLink('https://build.nvidia.com')">build.nvidia.com</a>
+    </p>
+  </div>
+</div>
 </body>
 </html>
